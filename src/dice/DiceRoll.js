@@ -68,7 +68,10 @@ export default function DiceRoll() {
                 </div>
 
             ))}
-             {  results.length > 0 && (
+            <div className="container text-center">
+                <button type="submit" onClick={rollTheDices} className="btn btn-warning">Roll!</button>
+            </div>
+            {  results.length > 0 && (
                 <div className='container'>
                         <div className="container">
                             <h5>Results</h5>
@@ -81,9 +84,6 @@ export default function DiceRoll() {
 
                 </div>            
             )}
-            <div className="container text-center">
-                <button type="submit" onClick={rollTheDices} className="btn btn-warning">Roll!</button>
-            </div>
         </form>
 
         </div>

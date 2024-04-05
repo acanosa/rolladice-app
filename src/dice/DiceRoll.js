@@ -1,14 +1,12 @@
+import axios from 'axios';
+import { assertValidExecutionArguments } from 'graphql/execution/execute';
 import React, { useEffect, useState } from 'react'
 import DiceData from './DiceData'
 
 export default function DiceRoll() {
 
     const[diceDataList, setDiceDataList] = useState([{"name": "", "faces": 0}]);
-    const[numberOfDices, setNumberOfDices] = useState(1);
-    
-    const[dicesComponents, setDices] = useState([<DiceData key={"dice" + (numberOfDices)}
-            numberOfDice={numberOfDices} />]);    
-    
+    const[results, setResults] = useState([]);
 
     const addDiceRow = (e) => {
         e.preventDefault();
@@ -17,8 +15,19 @@ export default function DiceRoll() {
     }
 
     const rollTheDices = (e) => {
+        const url = "http://localhost:3001/roll"
         e.preventDefault();
-        console.log(JSON.stringify(diceDataList));;
+        console.log(JSON.stringify(diceDataList));
+
+        axios.post(url, diceDataList)
+        .then((response) => {
+            console.log(JSON.stringify(response.data.results));
+            setResults([...response.data.results]);
+        })
+        .catch( (error) => {
+            console.log(error);
+        })
+
     }
 
   return (
@@ -50,7 +59,7 @@ export default function DiceRoll() {
                                 id={"diceFaces" + (index + 1)} aria-describedby="facesHelp" 
                                 onInput={(e) => setDiceDataList( (prevState) => {
                                     const result = [...prevState];
-                                    result[index].faces = e.target.value;  
+                                    result[index].faces = Number(e.target.value);  
                                     return result;
                                   })}/>
                             <div id="facesHelp" className="form-text">Example: for d6, write 6</div>
@@ -59,7 +68,19 @@ export default function DiceRoll() {
                 </div>
 
             ))}
-            {/* {dicesComponents} */}
+             {  results.length > 0 && (
+                <div className='container'>
+                        <div className="container">
+                            <h5>Results</h5>
+                            <ul>
+                        { results.map( (e) => (
+                                <li>{e.name} rolled a {e.result}</li>
+                        ))}
+                            </ul>
+                        </div>
+
+                </div>            
+            )}
             <div className="container text-center">
                 <button type="submit" onClick={rollTheDices} className="btn btn-warning">Roll!</button>
             </div>

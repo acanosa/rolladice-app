@@ -5,13 +5,19 @@ import DiceData from './DiceData'
 
 export default function DiceRoll() {
 
-    const[diceDataList, setDiceDataList] = useState([{"name": "", "faces": 0}]);
+    const[diceDataList, setDiceDataList] = useState([{"name": "", "faces": 0, "modifier": 0}]);
     const[results, setResults] = useState([]);
 
     const addDiceRow = (e) => {
         e.preventDefault();
 
-        setDiceDataList(diceDataList.concat({"name": "", "faces": 0}));
+        setDiceDataList(diceDataList.concat({"name": "", "faces": 0, "modifier": 0}));
+    }
+
+    const deleteDiceRow = (e, indexToDelete) => {
+        e.preventDefault();
+
+        setDiceDataList(diceDataList.filter((dice, index) => index != indexToDelete.index));
     }
 
     const rollTheDices = (e) => {
@@ -55,7 +61,7 @@ export default function DiceRoll() {
                                 })}/>
                         </div>
                         <div className="p-2">
-                            <input type="number" placeholder="Faces" className="form-control" name="dice-faces"
+                            <input type="number" min={1} placeholder="Faces" className="form-control" name="dice-faces"
                                 id={"diceFaces" + (index + 1)} aria-describedby="facesHelp" 
                                 onInput={(e) => setDiceDataList( (prevState) => {
                                     const result = [...prevState];
@@ -63,6 +69,21 @@ export default function DiceRoll() {
                                     return result;
                                   })}/>
                             <div id="facesHelp" className="form-text">Example: for d6, write 6</div>
+                        </div>
+                        <div className="p-2">
+                            <input type="number" placeholder="modifier" className="form-control" name="dice-modifier"
+                                id={"modifier" + (index + 1)} aria-describedby="modifierHelp" 
+                                onInput={(e) => setDiceDataList( (prevState) => {
+                                    const result = [...prevState];
+                                    result[index].modifier = Number(e.target.value);  
+                                    return result;
+                                  })}/>
+                        </div>
+                        <div className="p-2">
+                            
+                        {index !== 0 && (
+                                <button type="submit" onClick={e => deleteDiceRow(e, {index})} className="btn btn-danger">X</button>
+                        )}
                         </div>
                     </div>
                 </div>
